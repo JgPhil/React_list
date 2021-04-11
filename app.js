@@ -17,7 +17,7 @@ var FilterableProductTable = function (_React$Component) {
         var _this = _possibleConstructorReturn(this, (FilterableProductTable.__proto__ || Object.getPrototypeOf(FilterableProductTable)).call(this, props));
 
         _this.state = {
-            filterText: 'Foot',
+            filterText: '',
             inStockOnly: false
         };
         _this.handleFilterTextChange = _this.handleFilterTextChange.bind(_this);
@@ -117,7 +117,7 @@ var SearchBar = function (_React$Component2) {
     return SearchBar;
 }(React.Component);
 
-function ProductRow(_ref) {
+var ProductRow = React.memo(function (_ref) {
     var product = _ref.product;
 
     var name = product.stocked ? product.name : React.createElement(
@@ -139,7 +139,7 @@ function ProductRow(_ref) {
             product.price
         )
     );
-}
+});
 
 function ProductCategoryRow(_ref2) {
     var category = _ref2.category;
@@ -156,6 +156,8 @@ function ProductCategoryRow(_ref2) {
 }
 
 function ProductTable(_ref3) {
+    var _this3 = this;
+
     var products = _ref3.products,
         inStockOnly = _ref3.inStockOnly,
         filterText = _ref3.filterText;
@@ -171,7 +173,7 @@ function ProductTable(_ref3) {
         for (var _iterator = products[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
             product = _step.value;
 
-            if (inStockOnly && !product.stocked) {
+            if (inStockOnly && !product.stocked || product.name.indexOf(filterText) === -1) {
                 continue;
             }
             if (product.category !== lastCategory) {
@@ -179,7 +181,9 @@ function ProductTable(_ref3) {
                 rows.push(React.createElement(ProductCategoryRow, { key: product.category, category: product.category }));
             }
             var key = product.name.replace(/\s+/g, '');
-            rows.push(React.createElement(ProductRow, { key: key, product: product }));
+            rows.push(React.createElement(ProductRow, { onClick: function onClick() {
+                    return _this3.demo = 1;
+                }, key: key, product: product }));
         }
     } catch (err) {
         _didIteratorError = true;
@@ -228,3 +232,10 @@ function ProductTable(_ref3) {
 }
 
 ReactDOM.render(React.createElement(FilterableProductTable, { products: PRODUCTS }), document.querySelector('#app'));
+
+/* const PRODUCTS2 = [...PRODUCTS, { category: "Electronics", price: "$199.99", stocked: true, name: "Nexus 8" }];
+
+window.setTimeout(function() {
+    ReactDOM.render(<FilterableProductTable products={PRODUCTS2} />, document.querySelector('#app')
+    )}, 2000)
+ */

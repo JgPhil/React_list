@@ -12,7 +12,7 @@ class FilterableProductTable extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            filterText: 'Foot',
+            filterText: '',
             inStockOnly: false
         }
         this.handleFilterTextChange = this.handleFilterTextChange.bind(this)
@@ -76,7 +76,7 @@ class SearchBar extends React.Component {
     }
 }
 
-function ProductRow({ product }) {
+const ProductRow = React.memo(function ({ product }) {
     const name = product.stocked ?
         product.name :
         <span className="text-danger" >{product.name}</span>
@@ -84,7 +84,7 @@ function ProductRow({ product }) {
         <td>{name}</td>
         <td>{product.price}</td>
     </tr>
-}
+})
 
 function ProductCategoryRow({ category }) {
     return <tr>
@@ -97,7 +97,10 @@ function ProductTable({ products, inStockOnly, filterText }) {
     let lastCategory = null;
 
     for (product of products) {
-        if (inStockOnly && !product.stocked) {
+        if (
+            (inStockOnly && !product.stocked) ||
+            (product.name.indexOf(filterText) === -1)
+        ) {
             continue
         }
         if (product.category !== lastCategory) {
@@ -105,7 +108,7 @@ function ProductTable({ products, inStockOnly, filterText }) {
             rows.push(<ProductCategoryRow key={product.category} category={product.category} />)
         }
         const key = product.name.replace(/\s+/g, '')
-        rows.push(<ProductRow key={key} product={product} />)
+        rows.push(<ProductRow onClick={() => this.demo = 1} key={key} product={product} />)
     };
 
     return <table className="table">
@@ -122,3 +125,10 @@ function ProductTable({ products, inStockOnly, filterText }) {
 }
 
 ReactDOM.render(<FilterableProductTable products={PRODUCTS} />, document.querySelector('#app'))
+
+/* const PRODUCTS2 = [...PRODUCTS, { category: "Electronics", price: "$199.99", stocked: true, name: "Nexus 8" }];
+
+window.setTimeout(function() {
+    ReactDOM.render(<FilterableProductTable products={PRODUCTS2} />, document.querySelector('#app')
+    )}, 2000)
+ */
